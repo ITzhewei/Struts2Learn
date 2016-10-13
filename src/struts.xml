@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+    <!--全局结果视图-->
+    <package name="myDefault" extends="struts-default">
+        <!--自定义结果类型-->
+        <result-types>
+            <result-type name="captche" class="com.zzw.web.action.CHPTCHAResult">
+            </result-type>
+        </result-types>
+
+        <global-results>
+            <!--结果视图的查找顺序,先找当前动作类自己的,如果没有,再去全局的结果视图查找-->
+            <result type="captche" name="success">
+                <param name="width">100</param>
+                <param name="height">30</param>
+            </result>
+        </global-results>
+
+    </package>
+
+    <!--
+    package元素:是定义一个struts的包,把配置文件按照面向对象 的思想来管理  分模块开发
+    name属性:指定包的的名称 注意:包的名称在配置文件中是唯一的
+    extends:指定当前包的父包,面向对象的体现
+    abstract:将包定义为抽象包, 该包可以被继承 ,并且该包不能存在 action属性
+    namespec属性:名称空间 ,当指定了名称空间之后,访问路径就变成了 : 访问路径=名称空间+动作名称 当不指定该属性时,该属性有默认值 为""
+    -->
+    <package name="p1" extends="myDefault">
+        <!--
+        action元素是定义动作的名称, 是动作类和动作方法的映射,以及当出现不同的结果的时候返回指定的结果视图
+        name属性: 动作的名称,和jsp页面上的请求url中的名称对应起来,注意在此处不行写.action
+        class属性 指定动作类的路径
+        method:指定动作方法
+        -->
+        <!--默认的动态方法是execute-->
+        <action name="hello" class="com.zzw.web.action.Action2">
+            <result name="success">/success.jsp</result>
+        </action>
+        <!--<action name="addUser" class="com.zzw.web.action.UserAction" method="addUser">
+            <result name="success">/success.jsp</result>
+        </action>
+        <action name="deleteUser" class="com.zzw.web.action.UserAction" method="deleteUser">
+            <result name="success">/success.jsp</result>
+        </action>
+        <action name="updateUser" class="com.zzw.web.action.UserAction" method="updateuser">
+            <result name="success">/success.jsp</result>
+        </action>
+        <action name="queryUser" class="com.zzw.web.action.UserAction" method="queryUser">
+            <result name="success">/success.jsp</result>
+        </action>-->
+
+        <!--&lt;!&ndash;使用通配符来配置action&ndash;&gt;-->
+        <!--<action name="*_*" class="com.zzw.web.action.{2}Action" method="{1}{2}">-->
+        <!--<result name="success">/success.jsp</result>-->
+        <!--</action>-->
+
+        <!--动态方法调用-->
+        <action name="user" class="com.zzw.web.action.UserAction">
+            <!--result元素-->
+            <!--配置逻辑结果视图
+               name属性:结果视图名称.与action方法的返回值对应,当一致的时候转发到指定的页面上  (请求转发)
+               type属性:结果视图类型.  不写的时候有默认值 默认值是:dispatcher
+               常用取值有:  dispatcher:请求转发   redirect:重定向  chain:转发到另一个动作 redirectAction:重定向到另一个动作
+
+                chain: 又分为转发到 同包(同名称空间) 下的另一个动作
+                        和  转发到 不同包(不同名称空间下)的另一个动作
+                redirectAction  重定向到同包的 另一个动作
+                                 重定向到 不同包 的另一个动作
+
+                重定向和请求转发的区别
+                请求转发和重定向的区别: 转发是一次请求 重定向是两次来请求
+                重定向是服务器的行为 转发是浏览器的行为
+                地址栏不变的是  请求转发   重定向的地址栏是会发生变化的
+                请求域中的数据 转发 不丢失数据  重定向是会丢失数据的
+            -->
+            <result name="success" type="redirectAction"
+            >
+                <param name="actionName">action_p2</param>
+            </result>
+        </action>
+
+        <!--没有给定给定动作类 默认的动作类是 ActionSupport 没有给定动作方法 默认的动作方法是 execute-->
+        <action name="action2">
+            <result name="success" type="redirect">
+                <!--使用 注入的思想 在执行之前,会先获取这两个参数的值
+                调用的就是setNameSpace("/n2) 和 setActionName() 两个方法
+                -->
+                <!--<param name="actionName">action_p2</param>-->
+                <!--<param name="namespace">/p2</param>-->
+                action_p2
+            </result>
+        </action>
+
+        <!-- 在这里使用的是 这种情况下 -->
+
+        <action name="action_p2">
+            <result name="success" type="redirect">/success1.jsp</result>
+        </action>
+
+
+    </package>
+
+
+    <package name="p2" extends="myDefault" namespace="/">
+        <action name="action_p2">
+            <result name="success" type="redirect">
+                <param name="location">/success.jsp</param>
+            </result>
+        </action>
+    </package>
+
+
+    <package name="p3" extends="myDefault">
+        <action name="captchaAction">
+
+        </action>
+    </package>
+
+
+    <!--修改struts中default.properties定义的常量值-->
+    <constant name="struts.devMode" value="true"/>
+
+    <constant name="struts.enable.DynamicMethodInvocation" value="true"/>
+    <!--<constant name="struts.action.extension" value="do"/>-->
+
+</struts>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    <!--全局配置-->
+    <constant name="struts.devMode" value="true"/>
+    <constant name="struts.enable.DynamicMethodInvocation" value="true"/>
+    <package name="my" extends="struts-default" abstract="true">
+
+    </package>
+
+    <package name="p1" extends="my">
+        <action name="action1" class="action.ActionDemo1">
+            <result name="success">
+                /index.jsp
+            </result>
+        </action>
+        <action name="action2" class="action.ActionDemo2"></action>
+    </package>
+
+    <!--引入分包的struts配置文件-->
+    <include file="struts_user.xml"></include>
+
+</struts>
